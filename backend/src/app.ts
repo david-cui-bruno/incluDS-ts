@@ -26,8 +26,18 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 
+// CORS configuration with multiple allowed origins
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'https://includs.org',
+    'https://www.includs.org',
+    'https://includs.vercel.app',
+    'https://includs-jsmblw22d-david-cuis-projects.vercel.app',
+    'https://includs-nxq6a6q2j-david-cuis-projects.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174'
+  ],
   credentials: true
 }));
 
