@@ -53,6 +53,7 @@ const allowedOrigins = [
   'https://includs.vercel.app',
   'https://includs-jsmblw22d-david-cuis-projects.vercel.app',
   'https://includs-nxq6a6q2j-david-cuis-projects.vercel.app',
+  'https://includs-95cet7rll-david-cuis-projects.vercel.app', // NEW URL
   'http://localhost:5173',
   'http://localhost:5174'
 ];
