@@ -8,9 +8,25 @@ import type { SummaryAPIResponse } from '../types/index';
 
 export const documentsRouter = Router();
 
+console.log('📋 Setting up documents router...');
+
+// Middleware to log all requests to documents API
+documentsRouter.use((req, res, next) => {
+  console.log(`📋 Documents API: ${req.method} ${req.path}`, {
+    origin: req.headers.origin,
+    contentType: req.headers['content-type'],
+    body: req.method === 'POST' ? (req.body ? 'BODY_PRESENT' : 'NO_BODY') : undefined,
+    files: req.files || req.file ? 'FILE_PRESENT' : 'NO_FILES',
+    timestamp: new Date().toISOString()
+  });
+  next();
+});
+
 documentsRouter.post('/upload-and-summarize', uploadMiddleware, handleUploadError, async (req: any, res: any) => {
+  console.log('📄 File upload endpoint hit!');
   try {
     if (!req.file) {
+      console.log('❌ No file in request');
       return res.status(400).json({ 
         success: false,
         error: 'No file uploaded' 
@@ -61,6 +77,7 @@ documentsRouter.post('/upload-and-summarize', uploadMiddleware, handleUploadErro
       quality: qualityReport
     };
 
+    console.log('✅ Sending successful response for file upload');
     res.json(response);
 
   } catch (error: any) {
@@ -74,10 +91,29 @@ documentsRouter.post('/upload-and-summarize', uploadMiddleware, handleUploadErro
 });
 
 documentsRouter.post('/text-summarize', async (req, res) => {
+  console.log('📝 Text summarize endpoint hit!');
+  console.log('📝 Request details:', {
+    origin: req.headers.origin,
+    contentType: req.headers['content-type'],
+    bodyKeys: req.body ? Object.keys(req.body) : 'NO_BODY',
+    hasText: !!req.body?.text,
+    textLength: req.body?.text?.length || 0
+  });
+  
   try {
     const { text, maxWords = 1000, gradeLevel = 8 } = req.body;
     
+    console.log('📝 Request body received:', {
+      textLength: text?.length || 0,
+      maxWords,
+      gradeLevel,
+      hasText: !!text,
+      textType: typeof text,
+      textPreview: text ? text.substring(0, 100) + '...' : 'NO_TEXT'
+    });
+    
     if (!text || typeof text !== 'string') {
+      console.log('❌ Invalid text provided:', { text: typeof text, hasText: !!text });
       return res.status(400).json({ 
         success: false,
         error: 'No text provided or invalid text format' 
@@ -89,6 +125,7 @@ documentsRouter.post('/text-summarize', async (req, res) => {
     // Preprocess text
     console.log('🔧 Preprocessing text...');
     const cleanText = TextProcessor.preprocess(text);
+    console.log('🔧 Cleaned text length:', cleanText.length);
     
     // Generate summary
     console.log('🤖 Generating summary with GPT-4...');
@@ -98,6 +135,8 @@ documentsRouter.post('/text-summarize', async (req, res) => {
       gradeLevel,
       isFile: false // Text gets converted to 8th grade level
     });
+    
+    console.log('🤖 OpenAI response received, summary length:', summaryResponse.summary.length);
     
     // Quality assessment
     console.log('✅ Assessing quality...');
@@ -114,10 +153,15 @@ documentsRouter.post('/text-summarize', async (req, res) => {
       quality: qualityReport
     };
 
+    console.log('✅ Sending successful text summarization response');
     res.json(response);
 
   } catch (error: any) {
-    console.error('❌ Error processing text:', error);
+    console.error('❌ Error processing text:', {
+      error: error.message,
+      stack: error.stack,
+      origin: req.headers.origin
+    });
     res.status(500).json({
       success: false,
       error: 'Failed to process text',
@@ -128,6 +172,7 @@ documentsRouter.post('/text-summarize', async (req, res) => {
 
 // Health check for documents service
 documentsRouter.get('/health', (req, res) => {
+  console.log('❤️ Documents health check from:', req.headers.origin);
   res.json({
     success: true,
     service: 'documents',
@@ -140,10 +185,19 @@ documentsRouter.get('/health', (req, res) => {
 });
 
 documentsRouter.post('/ask-question', async (req: any, res: any) => {
+  console.log('❓ Ask question endpoint hit from:', req.headers.origin);
   try {
     const { question, context } = req.body;
     
+    console.log('❓ Question request:', {
+      hasQuestion: !!question,
+      hasContext: !!context,
+      questionLength: question?.length || 0,
+      contextLength: context?.length || 0
+    });
+    
     if (!question || !context) {
+      console.log('❌ Missing question or context');
       return res.status(400).json({
         success: false,
         error: 'Question and context are required'
@@ -158,6 +212,7 @@ documentsRouter.post('/ask-question', async (req: any, res: any) => {
       gradeLevel: 8
     });
     
+    console.log('✅ Question answered successfully');
     res.json({
       success: true,
       question,
@@ -166,7 +221,11 @@ documentsRouter.post('/ask-question', async (req: any, res: any) => {
     });
 
   } catch (error: any) {
-    console.error('❌ Error answering question:', error);
+    console.error('❌ Error answering question:', {
+      error: error.message,
+      stack: error.stack,
+      origin: req.headers.origin
+    });
     res.status(500).json({
       success: false,
       error: 'Failed to answer question',
@@ -174,3 +233,5 @@ documentsRouter.post('/ask-question', async (req: any, res: any) => {
     });
   }
 });
+
+console.log('✅ Documents router setup complete');
