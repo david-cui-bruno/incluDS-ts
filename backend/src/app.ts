@@ -45,20 +45,40 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 
-// CORS configuration with multiple allowed origins
+// Enhanced CORS configuration with pattern matching
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:5173',
   'https://includs.org',
   'https://www.includs.org',
   'https://includs.vercel.app',
-  'https://includs-jsmblw22d-david-cuis-projects.vercel.app',
-  'https://includs-nxq6a6q2j-david-cuis-projects.vercel.app',
-  'https://includs-95cet7rll-david-cuis-projects.vercel.app', // NEW URL
   'http://localhost:5173',
   'http://localhost:5174'
 ];
 
-console.log('🌍 Setting up CORS with allowed origins:', allowedOrigins);
+// Function to check if origin matches allowed patterns
+function isOriginAllowed(origin: string): boolean {
+  // Check exact matches first
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+  
+  // Check Vercel deployment patterns for david-cuis-projects
+  const vercelPatterns = [
+    /^https:\/\/includs-[a-z0-9]+-david-cuis-projects\.vercel\.app$/,
+    /^https:\/\/includs-[a-z0-9]+\.vercel\.app$/
+  ];
+  
+  for (const pattern of vercelPatterns) {
+    if (pattern.test(origin)) {
+      console.log('✅ CORS: Origin matches Vercel pattern:', origin);
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+console.log('🌍 Setting up CORS with allowed origins and patterns:', allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -71,18 +91,47 @@ app.use(cors({
       return callback(null, true);
     }
     
-    if (allowedOrigins.includes(origin)) {
+    if (isOriginAllowed(origin)) {
       console.log('✅ CORS: Origin allowed:', origin);
       callback(null, true);
     } else {
       console.log('❌ CORS: Origin rejected:', origin);
-      callback(new Error('Not allowed by CORS'));
+      console.log('❌ CORS: This origin does not match any allowed patterns');
+      
+      // Enhanced error for debugging
+      const error = new Error(`CORS: Origin ${origin} not allowed`);
+      callback(error);
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // For legacy browser support
 }));
+
+// Enhanced CORS error handling
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (err.message && err.message.includes('CORS')) {
+    console.error('🚫 CORS Error Details:', {
+      error: err.message,
+      origin: req.headers.origin,
+      method: req.method,
+      path: req.path,
+      headers: req.headers,
+      timestamp: new Date().toISOString()
+    });
+    
+    res.status(403).json({
+      error: 'CORS Error',
+      message: err.message,
+      origin: req.headers.origin,
+      allowedOrigins: allowedOrigins,
+      timestamp: new Date().toISOString()
+    });
+    return;
+  }
+  next(err);
+});
 
 // Rate limiting
 console.log('⏱️ Setting up rate limiting...');
@@ -129,7 +178,9 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     memory: process.memoryUsage(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    corsOrigin: req.headers.origin,
+    allowedOrigins: allowedOrigins
   });
 });
 
@@ -137,6 +188,18 @@ app.get('/health', (req, res) => {
 app.get('/favicon.ico', (req, res) => {
   console.log('🖼️ Favicon requested from:', req.headers.origin);
   res.status(204).end();
+});
+
+// CORS debug endpoint
+app.get('/debug/cors', (req, res) => {
+  console.log('🔍 CORS debug endpoint accessed from:', req.headers.origin);
+  res.json({
+    requestOrigin: req.headers.origin,
+    allowedOrigins: allowedOrigins,
+    isAllowed: req.headers.origin ? isOriginAllowed(req.headers.origin) : 'No origin header',
+    headers: req.headers,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // API routes
@@ -154,6 +217,7 @@ app.use((req, res, next) => {
     availableRoutes: [
       'GET /',
       'GET /health',
+      'GET /debug/cors',
       'GET /favicon.ico',
       'POST /api/documents/text-summarize',
       'POST /api/documents/upload-and-summarize'
@@ -161,9 +225,9 @@ app.use((req, res, next) => {
   });
 });
 
-// Error handling middleware
+// Global error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('💥 Error occurred:', {
+  console.error('💥 Global error occurred:', {
     error: err.message,
     stack: err.stack,
     method: req.method,
@@ -175,6 +239,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({
     error: 'Internal server error',
     message: err.message,
+    origin: req.headers.origin,
     timestamp: new Date().toISOString()
   });
 });
