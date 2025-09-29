@@ -255,7 +255,7 @@ function initSearchHandlers(): void {
   initResourcesFilter();
   
   if (useLocationBtn) {
-    useLocationBtn.addEventListener('click', (event) => {
+    useLocationBtn.addEventListener('click', () => {
       getCurrentLocationAndSearch();
     });
   }
@@ -273,7 +273,7 @@ function initSearchHandlers(): void {
   }
   
   if (searchBtn) {
-    searchBtn.addEventListener('click', (event) => {
+    searchBtn.addEventListener('click', () => {
       const locationInput = byId('location-input') as HTMLInputElement;
       if (locationInput && locationInput.value.trim()) {
         handleManualLocationSearch();
@@ -407,10 +407,11 @@ async function handleManualLocationSearch(): Promise<void> {
     console.log('📍 Setting coordinates in GoogleMapsService:', coordinates);
     GoogleMapsService.setUserLocation(coordinates);
     
-    if (GoogleMapsService.map) {
+    const map = GoogleMapsService.getMap();
+    if (map) {
       console.log('🗺️ Updating map center and zoom');
-      GoogleMapsService.map.setCenter(coordinates);
-      GoogleMapsService.map.setZoom(12);
+      map.setCenter(coordinates);
+      map.setZoom(12);
     } else {
       console.warn('⚠️ No map available to center');
     }
@@ -436,8 +437,8 @@ async function handleManualLocationSearch(): Promise<void> {
   } catch (error) {
     console.error('💥 Error in manual location search:');
     console.error('❌ Error object:', error);
-    console.error('❌ Error message:', error.message);
-    console.error('❌ Error stack:', error.stack);
+    console.error('❌ Error message:', (error as Error).message);
+    console.error('❌ Error stack:', (error as Error).stack);
     
     if (useLocationBtn) {
       console.log('🔴 Updating button to show error state');
@@ -460,7 +461,7 @@ async function handleManualLocationSearch(): Promise<void> {
 
 async function getCurrentLocationAndSearch(): Promise<void> {
   try {
-    const position = await GoogleMapsService.getCurrentLocation();
+    await GoogleMapsService.getCurrentLocation();
     
     const locationInput = byId('location-input') as HTMLInputElement;
     if (locationInput) {
@@ -598,7 +599,7 @@ function displayResultsList(results: AggregatedResult[]): void {
   `).join('');
   
   // Add click handlers to focus on map markers
-  results.forEach((resource, index) => {
+  results.forEach((_resource, index) => {
     const item = resultsList.querySelector(`[data-index="${index}"]`);
     item?.addEventListener('click', () => {
       GoogleMapsService.focusOnMarker(index);

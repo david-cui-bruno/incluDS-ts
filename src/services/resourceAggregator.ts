@@ -1,4 +1,4 @@
-import type { PlaceResult, GooglePlacesService } from './googlePlaces.js';
+// import type { PlaceResult, GooglePlacesService } from './googlePlaces.js';
 
 export interface SearchFilters {
   location: { lat: number; lng: number };

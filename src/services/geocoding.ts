@@ -114,11 +114,11 @@ export class GeocodingService {
 
     } catch (fetchError) {
       console.error('💥 Fetch error occurred:');
-      console.error('❌ Error name:', fetchError.name);
-      console.error('❌ Error message:', fetchError.message);
-      console.error('❌ Error stack:', fetchError.stack);
+      console.error('❌ Error name:', (fetchError as Error).name);
+      console.error('❌ Error message:', (fetchError as Error).message);
+      console.error('❌ Error stack:', (fetchError as Error).stack);
       
-      if (fetchError.message.includes('Failed to fetch')) {
+      if ((fetchError as Error).message.includes('Failed to fetch')) {
         console.error('🌐 Network error detected');
         throw new Error('Network error: Unable to reach Google Geocoding API.');
       }

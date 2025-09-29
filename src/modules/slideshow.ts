@@ -4,7 +4,7 @@ import { byId } from '../lib/utils.js';
 interface SlideShowState {
   currentSlide: number;
   totalSlides: number;
-  autoAdvanceInterval: NodeJS.Timeout | null;
+  autoAdvanceInterval: number | null;
   isAutoAdvancing: boolean;
 }
 

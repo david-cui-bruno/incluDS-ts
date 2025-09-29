@@ -1,6 +1,5 @@
-import type { Study, Procedure, SearchResult } from '../types/domain.js';
-import { byId, $$ } from '../lib/utils.js';
-import { getStudies, getProcedures } from '../services/data.js';
+import type { SearchResult } from '../types/domain.js';
+import { byId } from '../lib/utils.js';
 import { searchStudies } from './studies.js';
 import { searchProcedures } from './procedures.js';
 

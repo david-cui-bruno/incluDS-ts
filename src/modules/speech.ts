@@ -9,7 +9,7 @@ function getPreferredVoice(): SpeechSynthesisVoice | null {
   const voices = speechSynthesis.getVoices();
   
   // Log available voices for debugging
-  console.log('🔊 Available voices:', voices.map(v => `${v.name} (${v.lang}) - ${v.gender || 'unknown gender'}`));
+  console.log('🔊 Available voices:', voices.map(v => `${v.name} (${v.lang}) - ${(v as any).gender || 'unknown gender'}`));
   
   for (const preferredName of APP_CONFIG.SPEECH.PREFERRED_VOICES) {
     const voice = voices.find(v => 
@@ -62,19 +62,19 @@ export function speak(text: string, element?: HTMLElement): void {
   utterance.onstart = () => {
     isCurrentlySpeaking = true;
     currentSpeechElement = element || null;
-    updateSpeechButtonState(element, true);
+    updateSpeechButtonState(element || null, true);
   };
   
   utterance.onend = () => {
     isCurrentlySpeaking = false;
     currentSpeechElement = null;
-    updateSpeechButtonState(element, false);
+    updateSpeechButtonState(element || null, false);
   };
   
   utterance.onerror = () => {
     isCurrentlySpeaking = false;
     currentSpeechElement = null;
-    updateSpeechButtonState(element, false);
+    updateSpeechButtonState(element || null, false);
   };
   
   // Cancel any ongoing speech and start new

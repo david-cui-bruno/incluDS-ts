@@ -7,12 +7,12 @@ declare global {
   }
 }
 
-const getGoogleMaps = (): any => {
-  if (!(window as any).google?.maps) {
-    throw new Error('Google Maps not loaded');
-  }
-  return (window as any).google;
-};
+// const getGoogleMaps = (): any => {
+//   if (!(window as any).google?.maps) {
+//     throw new Error('Google Maps not loaded');
+//   }
+//   return (window as any).google;
+// };
 
 export interface MapLocation {
   lat: number;
@@ -24,6 +24,10 @@ export class GoogleMapsService {
   private static markers: any[] = [];
   private static userLocation: MapLocation | null = null;
   private static isLoaded = false;
+
+  static getMap(): any {
+    return this.map;
+  }
 
   static async loadGoogleMaps(): Promise<void> {
     if (this.isLoaded && (window as any).google?.maps) {
