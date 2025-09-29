@@ -1,0 +1,68 @@
+[
+  {
+    "name": "INCLUDE Project",
+    "year": 2018,
+    "org": "NIH (multi-institute)",
+    "url": "https://www.nih.gov/include-project",
+    "summary": "INCLUDE supports many teams that study health across the lifespan in Down syndrome—brain, heart, sleep, immune system, and more. The project also connects data across studies so discoveries can move faster and help families make informed choices."
+  },
+  {
+    "name": "INCLUDE Data Coordinating Center (INCLUDE DCC)",
+    "year": 2020,
+    "org": "NIH / INCLUDE",
+    "url": "https://includedcc.org/",
+    "summary": "The INCLUDE DCC is a cloud platform that safely gathers and shares research data. It helps scientists find and reuse information, which reduces repeated work and speeds up progress for the Down syndrome community."
+  },
+  {
+    "name": "ABC-DS: Alzheimer's Biomarkers Consortium–Down Syndrome",
+    "year": 2016,
+    "org": "NIA with partners",
+    "url": "https://www.nia.nih.gov/research/abc-ds",
+    "summary": "ABC-DS follows adults with Down syndrome over time to learn which tests best track brain health. The team uses memory checks, blood tests, and scans to understand changes early and to prepare for future treatments."
+  },
+  {
+    "name": "DS-Connect®: The Down Syndrome Registry",
+    "year": 2013,
+    "org": "NICHD / NIH",
+    "url": "https://dsconnect.nih.gov/",
+    "summary": "DS-Connect® is a secure national registry where people with Down syndrome and families can share health information and learn about research opportunities. It matches volunteers to studies and helps researchers see real-world health patterns."
+  },
+  {
+    "name": "LIFE-DSR: Longitudinal Investigation for the Enhancement of Down Syndrome Research",
+    "year": 2021,
+    "org": "DS-CTN / LuMind IDSC",
+    "url": "https://www.lumindidsc.org/life-dsr/",
+    "summary": "LIFE-DSR is a natural history study that follows adults with Down syndrome at set times. It looks at health, daily life, and thinking skills. Because it is observational, no medicine is tested, which keeps the study low-risk and welcoming."
+  },
+  {
+    "name": "Mass General Down Syndrome Research Program Cohort",
+    "year": 2008,
+    "org": "Massachusetts General Hospital",
+    "url": "https://www.massgeneral.org/children/down-syndrome/research",
+    "summary": "This program invites children and adults with Down syndrome to join research on health, learning, and daily life. The team combines clinic information with surveys and shares practical ideas families can use at home, school, and work."
+  },
+  {
+    "name": "CHOP Trisomy 21 Program & Research Group",
+    "year": 2000,
+    "org": "Children's Hospital of Philadelphia",
+    "url": "https://www.chop.edu/centers-programs/trisomy-21-program",
+    "summary": "CHOP runs projects on language, sleep, heart health, behavior, and family supports. The group also studies better ways to explain research so teens and adults can make informed choices, with strong community involvement."
+  },
+  {
+    "name": "PEDSnet projects including Down syndrome",
+    "year": 2014,
+    "org": "PEDSnet Consortium",
+    "url": "https://pedsnet.org/research/",
+    "summary": "PEDSnet links children's hospitals to learn from real-world care. Projects that include children with Down syndrome study safe medicines, infections, sleep, and more—so doctors can improve care using information from many hospitals."
+  },
+  {
+    "name": "INCLUDE Collaboration for Down syndrome Progress (CDP)",
+    "year": 2023,
+    "org": "INCLUDE CDP",
+    "url": "https://includecdp.org/",
+    "summary": "The CDP works with many sites to enroll large numbers of participants using shared forms and data rules. This makes results easier to compare and makes participation simpler for families."
+  }
+]
+
+
+
