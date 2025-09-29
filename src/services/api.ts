@@ -29,7 +29,15 @@ export interface SummaryResponse {
 export class APIService {
   private static baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
   
+  private static checkBackendAvailable(): boolean {
+    return !!import.meta.env.VITE_API_URL;
+  }
+  
   static async summarizeFile(file: File): Promise<SummaryResponse> {
+    if (!this.checkBackendAvailable()) {
+      throw new Error('Text summarization is currently unavailable. Backend service not configured.');
+    }
+    
     const formData = new FormData();
     formData.append('file', file);
     formData.append('maxWords', '1000');
@@ -49,6 +57,10 @@ export class APIService {
   }
   
   static async summarizeText(text: string): Promise<Omit<SummaryResponse, 'document'>> {
+    if (!this.checkBackendAvailable()) {
+      throw new Error('Text summarization is currently unavailable. Backend service not configured.');
+    }
+    
     const response = await fetch(`${this.baseURL}/documents/text-summarize`, {
       method: 'POST',
       headers: {

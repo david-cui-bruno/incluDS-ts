@@ -38,6 +38,12 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Backend server running on port ${PORT}`);
-});
+// For Vercel deployment
+export default app;
+
+// For local development
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Backend server running on port ${PORT}`);
+  });
+}
