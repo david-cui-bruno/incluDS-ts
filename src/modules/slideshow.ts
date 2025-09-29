@@ -1,5 +1,6 @@
 // Slideshow functionality for the home page hero section
 import { byId } from '../lib/utils.js';
+import { navigate } from './navigation.js';
 
 interface SlideShowState {
   currentSlide: number;
@@ -65,6 +66,44 @@ export function initSlideshow(): void {
       pauseAutoAdvance();
     } else if (state.isAutoAdvancing) {
       resumeAutoAdvance();
+    }
+  });
+
+  // Handle CTA link clicks for navigation
+  slideshow.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const ctaLink = target.closest('.slide-cta') as HTMLAnchorElement;
+    
+    if (ctaLink) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Pause auto-advance immediately when CTA is clicked
+      pauseAutoAdvance();
+      
+      const href = ctaLink.getAttribute('href');
+      const parentSlide = ctaLink.closest('.slide') as HTMLElement;
+      const slideFeature = parentSlide?.getAttribute('data-feature');
+      const activeSlide = slideshow.querySelector('.slide.active') as HTMLElement;
+      const activeFeature = activeSlide?.getAttribute('data-feature');
+      
+      console.log('🎯 Clicked slideshow CTA link:', ctaLink.textContent?.trim());
+      console.log('🔗 Link href:', href);
+      console.log('📱 Current slide index:', state.currentSlide);
+      console.log('🎪 Active slide feature:', activeFeature);
+      console.log('🎭 Clicked slide feature:', slideFeature);
+      console.log('🎨 Is clicked slide active?', parentSlide?.classList.contains('active'));
+      
+      if (href && href.startsWith('#')) {
+        const page = href.slice(1); // Remove the # symbol
+        console.log('📄 Extracted page:', page);
+        console.log('🚀 About to navigate to:', page);
+        navigate(page);
+      } else {
+        console.error('❌ Invalid href:', href);
+      }
+    } else {
+      console.log('ℹ️ Clicked in slideshow but not on CTA link');
     }
   });
 

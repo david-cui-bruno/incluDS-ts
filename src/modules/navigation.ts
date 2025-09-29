@@ -31,19 +31,28 @@ function initReadButtons(root: HTMLElement | Document = document): void {
 
 export function navigate(id: string): void {
   // Fallback to home if unknown page
+  console.log('🧭 Navigate called with id:', id);
+  console.log('🗂️ Available pages:', pages);
+  console.log('✅ Page exists in list:', pages.includes(id as PageId));
+  
   const target = pages.includes(id as PageId) ? (id as PageId) : 'home';
   
-  console.log('Navigating to:', target); // Debug log
+  console.log('🎯 Final target page:', target);
+  console.log('🔄 Starting navigation to:', target);
   
   // Show/hide sections using CSS classes
   pages.forEach(p => {
     const sec = getElementById(p);
     if (sec) {
       if (p === target) {
+        console.log(`✅ Activating page: ${p}`);
         sec.classList.add('active');
       } else {
+        console.log(`❌ Deactivating page: ${p}`);
         sec.classList.remove('active');
       }
+    } else {
+      console.warn(`⚠️ Page element not found: ${p}`);
     }
     
     // Update navigation link active states (if they have IDs)

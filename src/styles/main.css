@@ -264,11 +264,13 @@ body {
   box-sizing: border-box;
   background: white;
   z-index: 2;
+  pointer-events: none; /* Prevent interaction with inactive slides */
 }
 
 .slide.active {
   opacity: 1;
   transform: translateX(0);
+  pointer-events: auto; /* Allow interaction with active slide */
 }
 
 .slide-content {
