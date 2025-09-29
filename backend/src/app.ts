@@ -43,8 +43,20 @@ app.use('/api', limiter);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Routes
-app.use('/api/documents', documentsRouter);
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'incluDS Backend API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      api: '/api/documents',
+      textSummarize: '/api/documents/text-summarize',
+      documentSummarize: '/api/documents/upload-and-summarize'
+    }
+  });
+});
 
 // Health check
 app.get('/health', (req, res) => {
@@ -55,6 +67,9 @@ app.get('/health', (req, res) => {
 app.get('/favicon.ico', (req, res) => {
   res.status(204).end();
 });
+
+// Routes
+app.use('/api/documents', documentsRouter);
 
 // For Vercel deployment
 export default app;
